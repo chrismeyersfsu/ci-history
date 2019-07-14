@@ -1,0 +1,17 @@
+version: '3'
+services:
+  cihistory:
+    image: "chrismeyers/cihistory:latest"
+    working_dir: "/devel"
+    volumes:
+      - "./:/devel"
+    links:
+      - mongo
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+
