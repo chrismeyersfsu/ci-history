@@ -4,7 +4,9 @@ services:
     image: "chrismeyers/cihistory:latest"
     working_dir: "/devel"
     volumes:
-      - "./:/devel"
+      - "../:/devel"
+    ports:
+      - "3000:3000"
     links:
       - mongo
   mongo:

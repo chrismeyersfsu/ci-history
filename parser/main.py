@@ -22,8 +22,8 @@ def build_dict_out_of_properties(suite: Element, properties: List[str]):
 
 for suite in xml:
     suite_dict = build_dict_out_of_properties(suite, ['name', 'skipped', 'time', 'failures', 'tests'])
-    suite_dict['time_ingested'] = datetime.datetime.utcnow()
-    suite_record = db.suite.insert_one(suite_dict)
+    suite_dict['time_created'] = datetime.datetime.utcnow()
+    suite_record = db.suites.insert_one(suite_dict)
 
     test_cases = []
     for case in suite:
@@ -41,8 +41,8 @@ for suite in xml:
         else:
             case_dict['result'] = 'unknown'
 
-        case_dict['time_ingested'] = suite_dict['time_ingested']
+        case_dict['time_created'] = suite_dict['time_created']
         case_dict['testsuite_ref'] = suite_record.inserted_id
         test_cases.append(case_dict)
 
-    db.case.insert_many(test_cases)
+    db.cases.insert_many(test_cases)
