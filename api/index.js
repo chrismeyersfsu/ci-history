@@ -1,13 +1,11 @@
 var MongoClient = require('mongodb').MongoClient;
+const config = require('./config');
 const express = require('express');
 const app = express();
-const port = 3000;
 
 
-
-var url = "mongodb://admin:password@mongo:27017/";
 var print = console.log;
-const client = new MongoClient(url);
+const client = new MongoClient(config.mongodb_url);
 
 (async () => {
   try {
@@ -15,7 +13,7 @@ const client = new MongoClient(url);
     const db = client.db('cihistory');
 
 		app.db = db;
-		app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+		app.listen(config.express_port, () => console.log(`Example app listening on port ${config.express_port}!`));
 
   } catch(e) {
     console.error("Database error " + e);

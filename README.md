@@ -1,2 +1,7 @@
 # cihistory
-cihistory
+
+Devel:
+```
+make build
+make devel
+```
