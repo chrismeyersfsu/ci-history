@@ -3,6 +3,8 @@ const config = require('./config');
 const express = require('express');
 const app = express();
 
+app.use(express.static('../ui/dist/'))
+
 
 var print = console.log;
 const client = new MongoClient(config.mongodb_url);
@@ -38,11 +40,9 @@ app.get('/api/v1/suites/', function (req, res) {
 });
 
 
-/*
 app.get('/api/v1/cases/', function (req, res) {
   (async () => {
 		const suites = await app.db.collection('cases').find({}).toArray();
 		res.send(wrap_results(suites));
   })();
 });
-*/
