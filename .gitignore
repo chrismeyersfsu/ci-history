@@ -104,3 +104,7 @@ venv.bak/
 
 # node_modules
 api/node_modules/
+ui/node_modules/
+
+# My
+ui/dist/main.js
