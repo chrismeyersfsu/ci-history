@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import json
+import os
+
 from flask import (
   Flask,
   escape,
@@ -7,21 +10,27 @@ from flask import (
   jsonify,
   send_from_directory,
 )
-import json
-import os
+from flask.json import JSONEncoder
 from flask_pymongo import PyMongo
 from bson import json_util, ObjectId
+from bson.raw_bson import RawBSONDocument
+
+class CustomJSONEncoder(JSONEncoder):
+    def default(self, obj): return json_util.default(obj)
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://admin:password@mongo:27017/"
+app.json_encoder = CustomJSONEncoder
 mongo = PyMongo(app)
 
 def wrap_results(data):
-    transform = json.loads(json_util.dumps({
-        'results': list(data)
-    }))
-    transform['count'] = len(transform['results'])
-    return transform
+    d = list(data)
+    c = len(d)
+    ret = {
+        'count': c,
+        'results': d,
+    }
+    return ret
 
 @app.route('/')
 def root():
