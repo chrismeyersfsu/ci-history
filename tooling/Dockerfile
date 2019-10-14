@@ -10,9 +10,6 @@ rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
 rm -f /lib/systemd/system/basic.target.wants/*;\
 rm -f /lib/systemd/system/anaconda.target.wants/*;
 
-# Node and NPM repos
-RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-
 # MongoDB client tools
 ADD ./tooling/mongodb.repo /etc/yum.repos.d/mongodb.repo
 
@@ -25,16 +22,22 @@ RUN yum -y install \
   python-pip \
   gcc-c++ \
   make \
-  nodejs \
   mongodb-org-shell
 
 RUN pip install virtualenv
 
+# Tools / parser / data init
 RUN mkdir /venv /tmp/parser
 RUN virtualenv /venv/parser --python=/usr/bin/python3
 ADD ./parser/requirements.txt /tmp/parser_requirements/
-
 RUN /venv/parser/bin/pip install -r /tmp/parser_requirements/requirements.txt
+
+# API Server
+RUN virtualenv /venv/server --python=/usr/bin/python3
+ADD ./server/api/requirements.txt /tmp/server_requirements/
+RUN /venv/server/bin/pip install -r /tmp/server_requirements/requirements.txt
+
+ENV LANG en_US.UTF-8
 
 VOLUME [ "/sys/fs/cgroup" ]
 CMD ["/usr/sbin/init"]

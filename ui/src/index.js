@@ -1,12 +1,15 @@
 import _ from 'lodash';
-import Tooltip from 'tooltip.js';
+import { GraphTooltip } from './graphtooltip.js';
 var flot = require('flot');
 
+// Config
 var C = {
   base_url: window.location.protocol + '//' + window.location.host + '/api/v1/',
-  graph: '#graph'
+  graph: '#graph',
+  tooltip: '#tooltip',
 };
 
+// State
 var S = {
   data: undefined,
   data_sorted: undefined,
@@ -21,54 +24,6 @@ function ep(endpoint) {
 }
 
 $(document).ready(function() {
-  function plothover(event, pos, item) {
-
-    if (!pos.x || !pos.y) {
-      return;
-    }
-
-    if (item) {
-      if (S.tooltip_datapoint_current == item.dataIndex) {
-        S.tooltip.show();
-        return;
-      }
-      S.tooltip_datapoint_current = item.dataIndex;
-
-      var entry = S.data[item.dataIndex];
-      // FIXME: HTML can be injected if entry.<property> are malicious
-      var label = entry.classname + "::" + entry.name + "<br>" + entry.time + " sec";
-      var x = item.datapoint[0].toFixed(2),
-        y = item.datapoint[1].toFixed(2);
-
-      x = item.pageX;
-      // HACK: Would rather set tooltip offset but something is lost
-      // in translation when tooltip.js passes offset to popper.js
-      y = item.pageY + 40;
-
-      $('#tooltip').offset({ left: x, top: y });
-      S.tooltip.hide();
-      S.tooltip.updateTitleContent(label);
-      S.tooltip.show();
-
-    } else {
-      if (S.tooltip) {
-        S.tooltip.hide();
-      }
-    }
-  }
-
-  $(C.graph).bind("plothover", plothover);
-
-  function plothovercleanup(event, pos, item) {
-      if (S.tooltip) {
-        S.tooltip.hide();
-      }
-  }
-  $(C.graph).bind("plothovercleanup", plothovercleanup);
-
-  $(C.graph).bind("plotclick", function (event, pos, item) {
-    console.log("Clicked");
-  });
 
   var plotOptions = {
     xaxis: {
@@ -95,7 +50,6 @@ $(document).ready(function() {
     for (var i=parseInt(from); i <= parseInt(to); ++i) {
       res.push([i, S.data[i].time]);
     }
-    console.log(JSON.stringify(res));
     return res;
   }
 
@@ -137,11 +91,9 @@ $(document).ready(function() {
     S.plot = $.plot($(C.graph), [ datapoints ], plotOptions);
     S.plot_overview = $.plot("#graph-overview", [ datapoints ], plotOptions);
 
+    let tooltip = new GraphTooltip(S.data, $(C.graph), $(C.tooltip));
+
   });
 
-  S.tooltip = new Tooltip($('#tooltip'), {
-    placement: 'right',
-    html: true,
-  });
 
 });
