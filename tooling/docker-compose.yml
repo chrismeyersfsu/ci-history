@@ -9,6 +9,15 @@ services:
       - "3000:3000"
     links:
       - mongo
+      - webpack
+  webpack:
+    image: "chrismeyers/cihistory-webpack:latest"
+    working_dir: "/devel"
+    volumes:
+      - "../ui:/devel"
+    ports:
+      - "3001:3001"
+    command: "make dev"
   mongo:
     image: mongo
     ports:
