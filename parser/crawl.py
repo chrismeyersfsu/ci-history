@@ -12,7 +12,6 @@ def get_results(server, build_id, base_url, artifact_path):
 
     request = Request(method='POST', url=url)
     res = server.jenkins_request(request)
-    #print("Found reuslts.xml {}".format(res.content))
     script_path = os.path.dirname(os.path.abspath( __file__ ))
     with open(os.path.join(script_path, 'sample_data', 'results_{}.xml'.format(build_id)), 'wb+') as f:
         f.write(res.content)
@@ -21,7 +20,6 @@ server = jenkins.Jenkins(secrets.host, username=secrets.username, password=secre
 
 builds = server.get_job_info(JOB_NAME)['builds']
 for b in builds:
-    print(b)
     build_number = b['number']
     build_details = server.get_build_info(JOB_NAME, build_number, depth=2)
 
