@@ -77,22 +77,27 @@ $(document).ready(function() {
 		S.plot.setSelection(ranges);
 	});
 
-  $.get(ep('cases/'), function(data) {
-    S.data = data['results'];
+  $.get(ep('runs/'), function(data) {
+    let run_id = data['results'][0]['_id']['$oid'];
 
-    S.data.sort(function(a, b) {
-      return b.time > a.time ? 1 : -1;
+    console.log("Getting run_id " + run_id);
+    $.get(ep('cases/?run=' + run_id), function(data) {
+      S.data = data['results'];
+
+      S.data.sort(function(a, b) {
+        return b.time > a.time ? 1 : -1;
+      });
+      var index = 0;
+      var datapoints = S.data.map(function(entry) {
+        return [index++, entry.time];
+      });
+
+      S.plot = $.plot($(C.graph), [ datapoints ], plotOptions);
+      S.plot_overview = $.plot("#graph-overview", [ datapoints ], plotOptions);
+
+      let tooltip = new GraphTooltip(S.data, $(C.graph), $(C.tooltip));
+
     });
-    var index = 0;
-    var datapoints = S.data.map(function(entry) {
-      return [index++, entry.time];
-    });
-
-    S.plot = $.plot($(C.graph), [ datapoints ], plotOptions);
-    S.plot_overview = $.plot("#graph-overview", [ datapoints ], plotOptions);
-
-    let tooltip = new GraphTooltip(S.data, $(C.graph), $(C.tooltip));
-
   });
 
 
