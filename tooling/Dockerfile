@@ -24,7 +24,7 @@ RUN yum -y install \
   make \
   mongodb-org-shell
 
-RUN pip install virtualenv
+RUN pip install "virtualenv<20"
 
 # Tools / parser / data init
 RUN mkdir /venv /tmp/parser
